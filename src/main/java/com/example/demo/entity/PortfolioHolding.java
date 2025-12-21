@@ -20,4 +20,16 @@ public class PortfolioHolding {
     private Double quantity;
     private BigDecimal marketValue;
     private Timestamp lastUpdated;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getQuantity() {
+        return quantity;
+    }
 }
