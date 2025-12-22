@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "stocks")
@@ -10,10 +11,15 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String ticker;
+
     private String companyName;
     private String sector;
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "stock")
+    private List<PortfolioHolding> holdings;
 
     public Stock() {}
 
@@ -37,5 +43,8 @@ public class Stock {
     public void setSector(String sector) { this.sector = sector; }
 
     public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean active) { isActive = active; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public List<PortfolioHolding> getHoldings() { return holdings; }
+    public void setHoldings(List<PortfolioHolding> holdings) { this.holdings = holdings; }
 }
