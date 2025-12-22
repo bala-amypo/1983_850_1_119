@@ -1,54 +1,57 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.RiskAnalysisResult;
-import com.example.demo.repository.PortfolioHoldingRepository;
-import com.example.demo.repository.RiskAnalysisResultRepository;
-import com.example.demo.repository.RiskThresholdRepository;
-import com.example.demo.repository.UserPortfolioRepository;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.RiskAnalysisService;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class RiskAnalysisServiceImpl implements RiskAnalysisService {
 
-    private final RiskAnalysisResultRepository analysisResultRepository;
-    private final UserPortfolioRepository userPortfolioRepository;
-    private final PortfolioHoldingRepository holdingRepository;
-    private final RiskThresholdRepository riskThresholdRepository;
+    private final PortfolioHoldingRepository holdingRepo;
+    private final RiskThresholdRepository thresholdRepo;
+    private final RiskAnalysisResultRepository analysisRepo;
+    private final UserPortfolioRepository portfolioRepo;
 
-    // ⚠️ EXACT constructor order required
-    public RiskAnalysisServiceImpl(
-            RiskAnalysisResultRepository analysisResultRepository,
-            UserPortfolioRepository userPortfolioRepository,
-            PortfolioHoldingRepository holdingRepository,
-            RiskThresholdRepository riskThresholdRepository
-    ) {
-        this.analysisResultRepository = analysisResultRepository;
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.holdingRepository = holdingRepository;
-        this.riskThresholdRepository = riskThresholdRepository;
+    public RiskAnalysisServiceImpl(PortfolioHoldingRepository holdingRepo,
+                                   RiskThresholdRepository thresholdRepo,
+                                   RiskAnalysisResultRepository analysisRepo,
+                                   UserPortfolioRepository portfolioRepo) {
+        this.holdingRepo = holdingRepo;
+        this.thresholdRepo = thresholdRepo;
+        this.analysisRepo = analysisRepo;
+        this.portfolioRepo = portfolioRepo;
     }
 
-    @Override
-    public RiskAnalysisResult analyzePortfolio(Long portfolioId) {
-        RiskAnalysisResult result = new RiskAnalysisResult();
-        result.setAnalysisDate(new Timestamp(System.currentTimeMillis()));
-        result.setIsHighRisk(false);
-        result.setNotes("Analysis completed");
-        return analysisResultRepository.save(result);
+    public RiskAnalysisResult analyze(Long portfolioId) {
+        UserPortfolio portfolio = portfolioRepo.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
+
+        List<PortfolioHolding> holdings = holdingRepo.findByPortfolioId(portfolioId);
+        double total = holdings.stream()
+                .mapToDouble(h -> h.getMarketValue().doubleValue())
+                .sum();
+
+        double highest = holdings.stream()
+                .mapToDouble(h -> (h.getMarketValue().doubleValue() / total) * 100)
+                .max()
+                .orElse(0);
+
+        RiskThreshold threshold = thresholdRepo.findByPortfolioId(portfolioId);
+        boolean highRisk = threshold != null && highest > threshold.getMaxSingleStockPercentage();
+
+        RiskAnalysisResult result = new RiskAnalysisResult(
+                portfolio, LocalDateTime.now(), highest, highRisk
+        );
+
+        return analysisRepo.save(result);
     }
 
-    @Override
-    public RiskAnalysisResult getAnalysisById(Long id) {
-        return analysisResultRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-    }
-
-    @Override
-    public List<RiskAnalysisResult> getAnalysesForPortfolio(Long portfolioId) {
-        return analysisResultRepository.findByPortfolioId(portfolioId);
+    public List<RiskAnalysisResult> getAnalyses(Long portfolioId) {
+        return analysisRepo.findByPortfolioId(portfolioId);
     }
 }

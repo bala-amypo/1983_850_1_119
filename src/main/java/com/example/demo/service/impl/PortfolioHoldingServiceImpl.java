@@ -1,9 +1,8 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.PortfolioHolding;
-import com.example.demo.repository.PortfolioHoldingRepository;
-import com.example.demo.repository.StockRepository;
-import com.example.demo.repository.UserPortfolioRepository;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.service.PortfolioHoldingService;
 import org.springframework.stereotype.Service;
 
@@ -12,49 +11,35 @@ import java.util.List;
 @Service
 public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
 
-    private final PortfolioHoldingRepository holdingRepository;
-    private final UserPortfolioRepository userPortfolioRepository;
-    private final StockRepository stockRepository;
+    private final PortfolioHoldingRepository repo;
+    private final UserPortfolioRepository portfolioRepo;
+    private final StockRepository stockRepo;
 
-    // ⚠️ EXACT constructor order required
-    public PortfolioHoldingServiceImpl(
-            PortfolioHoldingRepository holdingRepository,
-            UserPortfolioRepository userPortfolioRepository,
-            StockRepository stockRepository
-    ) {
-        this.holdingRepository = holdingRepository;
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.stockRepository = stockRepository;
+    public PortfolioHoldingServiceImpl(PortfolioHoldingRepository repo,
+                                       UserPortfolioRepository portfolioRepo,
+                                       StockRepository stockRepo) {
+        this.repo = repo;
+        this.portfolioRepo = portfolioRepo;
+        this.stockRepo = stockRepo;
     }
 
-    @Override
-    public PortfolioHolding createHolding(PortfolioHolding holding) {
+    public PortfolioHolding addHolding(Long portfolioId, Long stockId, PortfolioHolding holding) {
         if (holding.getQuantity() <= 0) {
-            throw new RuntimeException("Quantity must be > 0");
+            throw new IllegalArgumentException("Quantity must be greater than zero");
         }
-        return holdingRepository.save(holding);
+
+        UserPortfolio portfolio = portfolioRepo.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
+
+        Stock stock = stockRepo.findById(stockId)
+                .orElseThrow(() -> new ResourceNotFoundException("Stock not found"));
+
+        holding.setPortfolio(portfolio);
+        holding.setStock(stock);
+        return repo.save(holding);
     }
 
-    @Override
-    public PortfolioHolding updateHolding(Long id, PortfolioHolding holding) {
-        getHoldingById(id);
-        holding.setId(id);
-        return holdingRepository.save(holding);
-    }
-
-    @Override
-    public PortfolioHolding getHoldingById(Long id) {
-        return holdingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-    }
-
-    @Override
     public List<PortfolioHolding> getHoldingsByPortfolio(Long portfolioId) {
-        return holdingRepository.findByPortfolioId(portfolioId);
-    }
-
-    @Override
-    public void deleteHolding(Long id) {
-        holdingRepository.deleteById(id);
+        return repo.findByPortfolioId(portfolioId);
     }
 }

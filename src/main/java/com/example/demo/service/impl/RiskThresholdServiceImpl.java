@@ -1,48 +1,39 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.RiskThreshold;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.model.RiskThreshold;
+import com.example.demo.model.UserPortfolio;
 import com.example.demo.repository.RiskThresholdRepository;
+import com.example.demo.repository.UserPortfolioRepository;
 import com.example.demo.service.RiskThresholdService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class RiskThresholdServiceImpl implements RiskThresholdService {
 
-    private final RiskThresholdRepository riskThresholdRepository;
+    private final RiskThresholdRepository repo;
+    private final UserPortfolioRepository portfolioRepo;
 
-    // ⚠️ EXACT constructor order required
-    public RiskThresholdServiceImpl(RiskThresholdRepository riskThresholdRepository) {
-        this.riskThresholdRepository = riskThresholdRepository;
+    public RiskThresholdServiceImpl(RiskThresholdRepository repo,
+                                    UserPortfolioRepository portfolioRepo) {
+        this.repo = repo;
+        this.portfolioRepo = portfolioRepo;
     }
 
-    @Override
-    public RiskThreshold createThreshold(RiskThreshold threshold) {
-        return riskThresholdRepository.save(threshold);
+    public RiskThreshold setThreshold(Long portfolioId, RiskThreshold threshold) {
+        if (threshold.getMaxSingleStockPercentage() < 0 ||
+            threshold.getMaxSingleStockPercentage() > 100) {
+            throw new IllegalArgumentException("Invalid percentage");
+        }
+
+        UserPortfolio portfolio = portfolioRepo.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
+
+        threshold.setPortfolio(portfolio);
+        return repo.save(threshold);
     }
 
-    @Override
-    public RiskThreshold updateThreshold(Long id, RiskThreshold threshold) {
-        getThresholdById(id);
-        threshold.setId(id);
-        return riskThresholdRepository.save(threshold);
-    }
-
-    @Override
-    public RiskThreshold getActiveThreshold() {
-        return riskThresholdRepository.findByActiveTrue()
-                .orElseThrow(() -> new RuntimeException("Not found"));
-    }
-
-    @Override
-    public RiskThreshold getThresholdById(Long id) {
-        return riskThresholdRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found"));
-    }
-
-    @Override
-    public List<RiskThreshold> getAllThresholds() {
-        return riskThresholdRepository.findAll();
+    public RiskThreshold getThreshold(Long portfolioId) {
+        return repo.findByPortfolioId(portfolioId);
     }
 }

@@ -1,4 +1,10 @@
+package com.example.demo.service;
+
+import com.example.demo.model.UserPortfolio;
+import java.util.List;
+
 public interface UserPortfolioService {
-    UserPortfolio create(UserPortfolio portfolio);
-    List<UserPortfolio> getAll();
+    UserPortfolio createPortfolio(Long userId, UserPortfolio portfolio);
+    UserPortfolio getPortfolioById(Long id);
+    List<UserPortfolio> getPortfoliosByUser(Long userId);
 }
