@@ -1,28 +1,27 @@
-package com.example.demo.model;
+package com.example.demo.controller;
 
-import jakarta.persistence.*;
+import com.example.demo.model.RiskThreshold;
+import com.example.demo.service.RiskThresholdService;
+import org.springframework.web.bind.annotation.*;
 
-@Entity
-public class RiskThreshold {
+@RestController
+@RequestMapping("/api/risk-thresholds")
+public class RiskThresholdController {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private final RiskThresholdService service;
 
-    private String thresholdName;
-    private Double maxSingleStockPercentage;
-    private Double maxSectorPercentage;
-    private Boolean active = true;
+    public RiskThresholdController(RiskThresholdService service) {
+        this.service = service;
+    }
 
-    public Long getId() { return id; }
-    public String getThresholdName() { return thresholdName; }
-    public Double getMaxSingleStockPercentage() { return maxSingleStockPercentage; }
-    public Double getMaxSectorPercentage() { return maxSectorPercentage; }
-    public Boolean getActive() { return active; }
+    @PostMapping("/{portfolioId}")
+    public RiskThreshold set(@PathVariable Long portfolioId,
+                             @RequestBody RiskThreshold threshold) {
+        return service.setThreshold(portfolioId, threshold);
+    }
 
-    public void setId(Long id) { this.id = id; }
-    public void setThresholdName(String thresholdName) { this.thresholdName = thresholdName; }
-    public void setMaxSingleStockPercentage(Double v) { this.maxSingleStockPercentage = v; }
-    public void setMaxSectorPercentage(Double v) { this.maxSectorPercentage = v; }
-    public void setActive(Boolean active) { this.active = active; }
+    @GetMapping("/{portfolioId}")
+    public RiskThreshold get(@PathVariable Long portfolioId) {
+        return service.getThreshold(portfolioId);
+    }
 }

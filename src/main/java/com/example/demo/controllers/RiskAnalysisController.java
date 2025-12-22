@@ -1,35 +1,28 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.RiskAnalysisResult;
+import com.example.demo.model.RiskAnalysisResult;
 import com.example.demo.service.RiskAnalysisService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/risk-analysis")
-@Tag(name = "Risk Analysis Controller")
 public class RiskAnalysisController {
 
-    private final RiskAnalysisService riskAnalysisService;
+    private final RiskAnalysisService service;
 
-    public RiskAnalysisController(RiskAnalysisService riskAnalysisService) {
-        this.riskAnalysisService = riskAnalysisService;
+    public RiskAnalysisController(RiskAnalysisService service) {
+        this.service = service;
     }
 
-    @PostMapping("/analyze/{portfolioId}")
+    @PostMapping("/{portfolioId}")
     public RiskAnalysisResult analyze(@PathVariable Long portfolioId) {
-        return riskAnalysisService.analyzePortfolio(portfolioId);
+        return service.analyze(portfolioId);
     }
 
-    @GetMapping("/{id}")
-    public RiskAnalysisResult getAnalysis(@PathVariable Long id) {
-        return riskAnalysisService.getAnalysisById(id);
-    }
-
-    @GetMapping("/portfolio/{portfolioId}")
-    public List<RiskAnalysisResult> getAnalysesForPortfolio(@PathVariable Long portfolioId) {
-        return riskAnalysisService.getAnalysesForPortfolio(portfolioId);
+    @GetMapping("/{portfolioId}")
+    public List<RiskAnalysisResult> history(@PathVariable Long portfolioId) {
+        return service.getAnalyses(portfolioId);
     }
 }
