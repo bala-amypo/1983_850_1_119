@@ -1,5 +1,9 @@
+package com.example.demo.model;
+
+import jakarta.persistence.*;
+
 @Entity
-@Table(name = "stocks", uniqueConstraints = @UniqueConstraint(columnNames = "ticker"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "ticker"))
 public class Stock {
 
     @Id
