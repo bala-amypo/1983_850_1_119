@@ -1,34 +1,37 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "user_portfolios")
 public class UserPortfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-    private String portfolioName;
-    private Boolean active = true;
-    private Timestamp createdAt;
+    @ManyToOne
+    private User user;
 
-    @PrePersist
-    void created() {
-        createdAt = Timestamp.valueOf(LocalDateTime.now());
+    private String portfolioName;
+    private LocalDateTime createdAt;
+
+    public UserPortfolio() {}
+
+    public UserPortfolio(User user, String portfolioName, LocalDateTime createdAt) {
+        this.user = user;
+        this.portfolioName = portfolioName;
+        this.createdAt = createdAt;
     }
 
     public Long getId() { return id; }
-    public Long getUserId() { return userId; }
-    public String getPortfolioName() { return portfolioName; }
-    public Boolean getActive() { return active; }
-    public Timestamp getCreatedAt() { return createdAt; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public void setId(Long id) { this.id = id; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public String getPortfolioName() { return portfolioName; }
     public void setPortfolioName(String portfolioName) { this.portfolioName = portfolioName; }
-    public void setActive(Boolean active) { this.active = active; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

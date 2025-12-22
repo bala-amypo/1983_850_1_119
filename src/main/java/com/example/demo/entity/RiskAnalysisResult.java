@@ -1,37 +1,47 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "risk_analysis_results")
 public class RiskAnalysisResult {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     private UserPortfolio portfolio;
 
-    private Timestamp analysisDate;
+    private LocalDateTime analysisDate;
     private Double highestStockPercentage;
-    private Double highestSectorPercentage;
     private Boolean isHighRisk;
-    private String notes;
 
-    public Long getId() {
-        return id;
-    }
+    public RiskAnalysisResult() {}
 
-    public void setAnalysisDate(Timestamp analysisDate) {
+    public RiskAnalysisResult(UserPortfolio portfolio,
+                              LocalDateTime analysisDate,
+                              Double highestStockPercentage,
+                              Boolean isHighRisk) {
+        this.portfolio = portfolio;
         this.analysisDate = analysisDate;
-    }
-
-    public void setIsHighRisk(Boolean isHighRisk) {
+        this.highestStockPercentage = highestStockPercentage;
         this.isHighRisk = isHighRisk;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public Long getId() { return id; }
+    public UserPortfolio getPortfolio() { return portfolio; }
+    public void setPortfolio(UserPortfolio portfolio) { this.portfolio = portfolio; }
+
+    public LocalDateTime getAnalysisDate() { return analysisDate; }
+    public void setAnalysisDate(LocalDateTime analysisDate) { this.analysisDate = analysisDate; }
+
+    public Double getHighestStockPercentage() { return highestStockPercentage; }
+    public void setHighestStockPercentage(Double highestStockPercentage) {
+        this.highestStockPercentage = highestStockPercentage;
     }
+
+    public Boolean getIsHighRisk() { return isHighRisk; }
+    public void setIsHighRisk(Boolean highRisk) { isHighRisk = highRisk; }
 }

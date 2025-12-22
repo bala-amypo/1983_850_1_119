@@ -3,7 +3,7 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "ticker"))
+@Table(name = "stocks")
 public class Stock {
 
     @Id
@@ -13,7 +13,16 @@ public class Stock {
     private String ticker;
     private String companyName;
     private String sector;
-    private Boolean active = true;
+    private Boolean isActive;
+
+    public Stock() {}
+
+    public Stock(String ticker, String companyName, String sector, Boolean isActive) {
+        this.ticker = ticker;
+        this.companyName = companyName;
+        this.sector = sector;
+        this.isActive = isActive;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -27,6 +36,6 @@ public class Stock {
     public String getSector() { return sector; }
     public void setSector(String sector) { this.sector = sector; }
 
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean active) { isActive = active; }
 }

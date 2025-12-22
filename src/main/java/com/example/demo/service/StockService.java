@@ -1,7 +1,10 @@
+package com.example.demo.service;
+
+import com.example.demo.model.Stock;
+import java.util.List;
+
 public interface StockService {
-    Stock create(Stock stock);
-    Stock update(Long id, Stock stock);
-    Stock get(Long id);
-    List<Stock> getAll();
-    void deactivate(Long id);
+    Stock saveStock(Stock stock);
+    List<Stock> getAllStocks();
+    Stock getStockById(Long id);
 }

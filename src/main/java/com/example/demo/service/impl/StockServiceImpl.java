@@ -1,34 +1,30 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.model.Stock;
+import com.example.demo.repository.StockRepository;
+import com.example.demo.service.StockService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @Service
 public class StockServiceImpl implements StockService {
 
-    private final StockRepository repo;
+    private final StockRepository stockRepository;
 
-    public StockServiceImpl(StockRepository repo) {
-        this.repo = repo;
+    public StockServiceImpl(StockRepository stockRepository) {
+        this.stockRepository = stockRepository;
     }
 
-    public Stock create(Stock stock) {
-        return repo.save(stock);
+    public Stock saveStock(Stock stock) {
+        return stockRepository.save(stock);
     }
 
-    public Stock update(Long id, Stock stock) {
-        Stock s = repo.findById(id).orElseThrow();
-        s.setCompanyName(stock.getCompanyName());
-        s.setSector(stock.getSector());
-        return repo.save(s);
+    public List<Stock> getAllStocks() {
+        return stockRepository.findAll();
     }
 
-    public Stock get(Long id) {
-        return repo.findById(id).orElseThrow();
-    }
-
-    public List<Stock> getAll() {
-        return repo.findAll();
-    }
-
-    public void deactivate(Long id) {
-        Stock s = repo.findById(id).orElseThrow();
-        s.setActive(false);
-        repo.save(s);
+    public Stock getStockById(Long id) {
+        return stockRepository.findById(id).orElse(null);
     }
 }
