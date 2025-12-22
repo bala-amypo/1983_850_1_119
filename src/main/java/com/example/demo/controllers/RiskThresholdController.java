@@ -1,46 +1,28 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
-import com.example.demo.entity.RiskThreshold;
-import com.example.demo.service.RiskThresholdService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
+import jakarta.persistence.*;
 
-import java.util.List;
+@Entity
+public class RiskThreshold {
 
-@RestController
-@RequestMapping("/api/risk-thresholds")
-@Tag(name = "Risk Threshold Controller")
-public class RiskThresholdController {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final RiskThresholdService riskThresholdService;
+    private String thresholdName;
+    private Double maxSingleStockPercentage;
+    private Double maxSectorPercentage;
+    private Boolean active = true;
 
-    public RiskThresholdController(RiskThresholdService riskThresholdService) {
-        this.riskThresholdService = riskThresholdService;
-    }
+    public Long getId() { return id; }
+    public String getThresholdName() { return thresholdName; }
+    public Double getMaxSingleStockPercentage() { return maxSingleStockPercentage; }
+    public Double getMaxSectorPercentage() { return maxSectorPercentage; }
+    public Boolean getActive() { return active; }
 
-    @PostMapping
-    public RiskThreshold createThreshold(@RequestBody RiskThreshold threshold) {
-        return riskThresholdService.createThreshold(threshold);
-    }
-
-    @PutMapping("/{id}")
-    public RiskThreshold updateThreshold(@PathVariable Long id,
-                                         @RequestBody RiskThreshold threshold) {
-        return riskThresholdService.updateThreshold(id, threshold);
-    }
-
-    @GetMapping("/active")
-    public RiskThreshold getActiveThreshold() {
-        return riskThresholdService.getActiveThreshold();
-    }
-
-    @GetMapping("/{id}")
-    public RiskThreshold getThreshold(@PathVariable Long id) {
-        return riskThresholdService.getThresholdById(id);
-    }
-
-    @GetMapping
-    public List<RiskThreshold> getAllThresholds() {
-        return riskThresholdService.getAllThresholds();
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setThresholdName(String thresholdName) { this.thresholdName = thresholdName; }
+    public void setMaxSingleStockPercentage(Double v) { this.maxSingleStockPercentage = v; }
+    public void setMaxSectorPercentage(Double v) { this.maxSectorPercentage = v; }
+    public void setActive(Boolean active) { this.active = active; }
 }
