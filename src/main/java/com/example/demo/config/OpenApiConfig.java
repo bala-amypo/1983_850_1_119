@@ -19,21 +19,21 @@ public class OpenApiConfig {
         }
 }
 
-package com.example.demo.config;
+// package com.example.demo.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+// import io.swagger.v3.oas.models.OpenAPI;
+// import io.swagger.v3.oas.models.info.Info;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class OpenApiConfig {
+// @Configuration
+// public class OpenApiConfig {
 
-    @Bean
-    public OpenAPI openAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Stock Portfolio Risk Analyzer")
-                        .version("1.0"));
-    }
-}
+//     @Bean
+//     public OpenAPI openAPI() {
+//         return new OpenAPI()
+//                 .info(new Info()
+//                         .title("Stock Portfolio Risk Analyzer")
+//                         .version("1.0"));
+//     }
+// }
