@@ -1,35 +1,33 @@
+package com.example.demo.controller;
+
+import com.example.demo.model.Stock;
+import com.example.demo.service.StockService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/stocks")
 public class StockController {
 
-    private final StockService service;
+    private final StockService stockService;
 
-    public StockController(StockService service) {
-        this.service = service;
+    public StockController(StockService stockService) {
+        this.stockService = stockService;
     }
 
     @PostMapping
-    public Stock create(@RequestBody Stock stock) {
-        return service.create(stock);
+    public Stock createStock(@RequestBody Stock stock) {
+        return stockService.saveStock(stock);
     }
 
     @GetMapping
-    public List<Stock> getAll() {
-        return service.getAll();
+    public List<Stock> getAllStocks() {
+        return stockService.getAllStocks();
     }
 
     @GetMapping("/{id}")
-    public Stock get(@PathVariable Long id) {
-        return service.get(id);
-    }
-
-    @PutMapping("/{id}")
-    public Stock update(@PathVariable Long id, @RequestBody Stock stock) {
-        return service.update(id, stock);
-    }
-
-    @PutMapping("/{id}/deactivate")
-    public void deactivate(@PathVariable Long id) {
-        service.deactivate(id);
+    public Stock getStock(@PathVariable Long id) {
+        return stockService.getStockById(id);
     }
 }
