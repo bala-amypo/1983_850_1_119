@@ -1,8 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.model.RiskThreshold;
+import com.example.demo.entity.RiskThreshold;
 
 public interface RiskThresholdService {
     RiskThreshold setThreshold(Long portfolioId, RiskThreshold threshold);
-    RiskThreshold getThreshold(Long portfolioId);
+
+    RiskThreshold getThresholdForPortfolio(Long portfolioId);
 }

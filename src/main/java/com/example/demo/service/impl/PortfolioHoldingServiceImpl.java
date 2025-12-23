@@ -1,45 +1,54 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.PortfolioHolding;
+import com.example.demo.entity.Stock;
+import com.example.demo.entity.UserPortfolio;
+import com.example.demo.repository.PortfolioHoldingRepository;
 import com.example.demo.service.PortfolioHoldingService;
+import com.example.demo.service.StockService;
+import com.example.demo.service.UserPortfolioService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
 
-    private final PortfolioHoldingRepository repo;
-    private final UserPortfolioRepository portfolioRepo;
-    private final StockRepository stockRepo;
+    private final PortfolioHoldingRepository portfolioHoldingRepository;
+    private final UserPortfolioService userPortfolioService;
+    private final StockService stockService;
 
-    public PortfolioHoldingServiceImpl(PortfolioHoldingRepository repo,
-                                       UserPortfolioRepository portfolioRepo,
-                                       StockRepository stockRepo) {
-        this.repo = repo;
-        this.portfolioRepo = portfolioRepo;
-        this.stockRepo = stockRepo;
+    public PortfolioHoldingServiceImpl(PortfolioHoldingRepository portfolioHoldingRepository,
+            UserPortfolioService userPortfolioService,
+            StockService stockService) {
+        this.portfolioHoldingRepository = portfolioHoldingRepository;
+        this.userPortfolioService = userPortfolioService;
+        this.stockService = stockService;
     }
 
+    @Override
     public PortfolioHolding addHolding(Long portfolioId, Long stockId, PortfolioHolding holding) {
+        UserPortfolio portfolio = userPortfolioService.getPortfolioById(portfolioId);
+        Stock stock = stockService.getStockById(stockId);
+
         if (holding.getQuantity() <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero");
         }
-
-        UserPortfolio portfolio = portfolioRepo.findById(portfolioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found"));
-
-        Stock stock = stockRepo.findById(stockId)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock not found"));
+        if (holding.getMarketValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Market value must be non-negative");
+        }
 
         holding.setPortfolio(portfolio);
         holding.setStock(stock);
-        return repo.save(holding);
+        return portfolioHoldingRepository.save(holding);
     }
 
+    @Override
     public List<PortfolioHolding> getHoldingsByPortfolio(Long portfolioId) {
-        return repo.findByPortfolioId(portfolioId);
+        // Validation of portfolio existence is implicit if we rely on finding it,
+        // but here we just query. To follow strict rules, maybe we should check if
+        // portfolio exists first.
+        return portfolioHoldingRepository.findByPortfolioId(portfolioId);
     }
 }

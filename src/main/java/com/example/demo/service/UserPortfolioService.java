@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.model.UserPortfolio;
+import com.example.demo.entity.UserPortfolio;
 import java.util.List;
 
 public interface UserPortfolioService {
-    UserPortfolio createPortfolio(Long userId, UserPortfolio portfolio);
+    UserPortfolio createPortfolio(UserPortfolio portfolio);
+
     UserPortfolio getPortfolioById(Long id);
+
     List<UserPortfolio> getPortfoliosByUser(Long userId);
 }
