@@ -1,7 +1,6 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "stocks")
@@ -11,17 +10,19 @@ public class Stock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String ticker;
 
+    @Column(name = "company_name")
     private String companyName;
+
     private String sector;
+
+    @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "stock")
-    private List<PortfolioHolding> holdings;
-
-    public Stock() {}
+    public Stock() {
+    }
 
     public Stock(String ticker, String companyName, String sector, Boolean isActive) {
         this.ticker = ticker;
@@ -30,21 +31,43 @@ public class Stock {
         this.isActive = isActive;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getTicker() { return ticker; }
-    public void setTicker(String ticker) { this.ticker = ticker; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getCompanyName() { return companyName; }
-    public void setCompanyName(String companyName) { this.companyName = companyName; }
+    public String getTicker() {
+        return ticker;
+    }
 
-    public String getSector() { return sector; }
-    public void setSector(String sector) { this.sector = sector; }
+    public void setTicker(String ticker) {
+        this.ticker = ticker;
+    }
 
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public String getCompanyName() {
+        return companyName;
+    }
 
-    public List<PortfolioHolding> getHoldings() { return holdings; }
-    public void setHoldings(List<PortfolioHolding> holdings) { this.holdings = holdings; }
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getSector() {
+        return sector;
+    }
+
+    public void setSector(String sector) {
+        this.sector = sector;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
 }
