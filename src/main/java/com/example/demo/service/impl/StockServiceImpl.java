@@ -4,6 +4,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Stock;
 import com.example.demo.repository.StockRepository;
 import com.example.demo.service.StockService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +21,16 @@ public class StockServiceImpl implements StockService {
     @Override
     public Stock createStock(Stock stock) {
         if (stockRepository.findByTicker(stock.getTicker()).isPresent()) {
-            throw new IllegalArgumentException("Stock with ticker " + stock.getTicker() + " already exists");
+            throw new IllegalArgumentException(
+                    "Stock with ticker " + stock.getTicker() + " already exists"
+            );
         }
         return stockRepository.save(stock);
     }
 
     @Override
     public Stock updateStock(Long id, Stock stock) {
-        Stock existing = getStockById(id);
+        Stock existing = getStockEntityById(id);
         existing.setTicker(stock.getTicker());
         existing.setCompanyName(stock.getCompanyName());
         existing.setSector(stock.getSector());
@@ -36,9 +39,12 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public Stock getStockById(Long id) {
+    public ResponseEntity<Stock> getStockById(Long id) {
         return stockRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Stock not found with id: " + id));
+                .map(ResponseEntity::ok)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Stock not found with id: " + id)
+                );
     }
 
     @Override
@@ -48,8 +54,18 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public void deactivateStock(Long id) {
-        Stock stock = getStockById(id);
+        Stock stock = getStockEntityById(id);
         stock.setIsActive(false);
         stockRepository.save(stock);
+    }
+
+    /**
+     * Internal helper method (keeps service logic clean)
+     */
+    private Stock getStockEntityById(Long id) {
+        return stockRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Stock not found with id: " + id)
+                );
     }
 }
