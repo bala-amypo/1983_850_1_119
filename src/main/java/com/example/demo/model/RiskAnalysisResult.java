@@ -22,18 +22,23 @@ public class RiskAnalysisResult {
     private Double highestStockPercentage;
 
     @Column(name = "is_high_risk")
-    private Boolean isHighRisk;
+    private boolean highRisk;   // 🔴 primitive boolean
 
     public RiskAnalysisResult() {
     }
 
-    public RiskAnalysisResult(UserPortfolio portfolio, Timestamp analysisDate, Double highestStockPercentage,
-            Boolean isHighRisk) {
+    public RiskAnalysisResult(
+            UserPortfolio portfolio,
+            Timestamp analysisDate,
+            Double highestStockPercentage,
+            boolean highRisk) {
         this.portfolio = portfolio;
         this.analysisDate = analysisDate;
         this.highestStockPercentage = highestStockPercentage;
-        this.isHighRisk = isHighRisk;
+        this.highRisk = highRisk;
     }
+
+    // ---------- getters & setters ----------
 
     public Long getId() {
         return id;
@@ -67,11 +72,12 @@ public class RiskAnalysisResult {
         this.highestStockPercentage = highestStockPercentage;
     }
 
-    public Boolean getIsHighRisk() {
-        return isHighRisk;
+    // 🔥 REQUIRED BY TEST CASE
+    public boolean isHighRisk() {
+        return highRisk;
     }
 
-    public void setIsHighRisk(Boolean highRisk) {
-        isHighRisk = highRisk;
+    public void setHighRisk(boolean highRisk) {
+        this.highRisk = highRisk;
     }
 }
