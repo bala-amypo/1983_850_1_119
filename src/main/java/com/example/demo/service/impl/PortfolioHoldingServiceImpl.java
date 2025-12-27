@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
@@ -32,16 +31,11 @@ public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
     @Override
     public PortfolioHolding addHolding(Long portfolioId, Long stockId, PortfolioHolding holding) {
 
-        // Get portfolio (already returns domain object)
         UserPortfolio portfolio = userPortfolioService.getPortfolioById(portfolioId);
 
-        // StockService returns ResponseEntity<Stock> → unwrap body
-        Stock stock = Objects.requireNonNull(
-                stockService.getStockById(stockId).getBody(),
-                "Stock not found with id: " + stockId
-        );
+        // IMPORTANT: service returns Stock (not ResponseEntity)
+        Stock stock = stockService.getStockById(stockId);
 
-        // Validations
         if (holding.getQuantity() <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero");
         }
@@ -51,7 +45,6 @@ public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
             throw new IllegalArgumentException("Market value must be non-negative");
         }
 
-        // Set relations
         holding.setPortfolio(portfolio);
         holding.setStock(stock);
 

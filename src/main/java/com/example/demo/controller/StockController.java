@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/stocks")
@@ -39,8 +38,7 @@ public class StockController {
     @GetMapping("/{id}")
     @Operation(summary = "Get a stock by ID")
     public ResponseEntity<Stock> getStockById(@PathVariable Long id) {
-        // IMPORTANT: service already returns ResponseEntity<Stock>
-        return stockService.getStockById(id);
+        return ResponseEntity.ok(stockService.getStockById(id));
     }
 
     @GetMapping
@@ -64,13 +62,9 @@ public class StockController {
     }
 
     // ---------------- TEST-COMPATIBILITY METHOD ----------------
-    // ⚠️ REQUIRED for PortfolioRiskAnalyzerTest (DO NOT REMOVE)
+    // REQUIRED by PortfolioRiskAnalyzerTest
 
     public Stock getStock(long id) {
-        // Test expects Stock, so unwrap ResponseEntity
-        return Objects.requireNonNull(
-                stockService.getStockById(id).getBody(),
-                "Stock not found with id: " + id
-        );
+        return stockService.getStockById(id);
     }
 }
