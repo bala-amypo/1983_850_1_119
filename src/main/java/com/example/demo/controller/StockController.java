@@ -20,8 +20,6 @@ public class StockController {
         this.stockService = stockService;
     }
 
-    // ---------------- REST API METHODS ----------------
-
     @PostMapping
     @Operation(summary = "Create a new stock")
     public ResponseEntity<Stock> createStock(@RequestBody Stock stock) {
@@ -61,10 +59,8 @@ public class StockController {
         return ResponseEntity.noContent().build();
     }
 
-    // ---------------- TEST-COMPATIBILITY METHOD ----------------
-    // REQUIRED by PortfolioRiskAnalyzerTest
-
-    public Stock getStock(long id) {
-        return stockService.getStockById(id);
+    // ✅ REQUIRED BY PortfolioRiskAnalyzerTest
+    public ResponseEntity<Stock> getStock(long id) {
+        return ResponseEntity.ok(stockService.getStockById(id));
     }
 }
