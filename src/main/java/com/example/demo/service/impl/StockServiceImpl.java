@@ -20,9 +20,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public Stock createStock(Stock stock) {
         if (stockRepository.findByTicker(stock.getTicker()).isPresent()) {
-            throw new IllegalArgumentException(
-                    "Stock with ticker " + stock.getTicker() + " already exists"
-            );
+            throw new IllegalArgumentException("Stock with ticker " + stock.getTicker() + " already exists");
         }
         return stockRepository.save(stock);
     }
@@ -40,9 +38,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public Stock getStockById(Long id) {
         return stockRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Stock not found with id: " + id)
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Stock not found with id: " + id));
     }
 
     @Override

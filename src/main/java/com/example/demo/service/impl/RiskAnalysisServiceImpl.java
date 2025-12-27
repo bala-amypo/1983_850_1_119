@@ -26,9 +26,9 @@ public class RiskAnalysisServiceImpl implements RiskAnalysisService {
     private final RiskThresholdService riskThresholdService;
 
     public RiskAnalysisServiceImpl(RiskAnalysisResultRepository riskAnalysisResultRepository,
-                                   UserPortfolioService userPortfolioService,
-                                   PortfolioHoldingService portfolioHoldingService,
-                                   RiskThresholdService riskThresholdService) {
+            UserPortfolioService userPortfolioService,
+            PortfolioHoldingService portfolioHoldingService,
+            RiskThresholdService riskThresholdService) {
         this.riskAnalysisResultRepository = riskAnalysisResultRepository;
         this.userPortfolioService = userPortfolioService;
         this.portfolioHoldingService = portfolioHoldingService;
@@ -41,44 +41,37 @@ public class RiskAnalysisServiceImpl implements RiskAnalysisService {
         List<PortfolioHolding> holdings = portfolioHoldingService.getHoldingsByPortfolio(portfolioId);
         RiskThreshold threshold = riskThresholdService.getThresholdForPortfolio(portfolioId);
 
-        if (holdings.isEmpty()) {
-            throw new IllegalStateException("Portfolio has no holdings to analyze");
-        }
-
-        // Calculate total portfolio value
         BigDecimal totalValue = BigDecimal.ZERO;
         for (PortfolioHolding h : holdings) {
             totalValue = totalValue.add(h.getMarketValue());
         }
 
-        // Calculate highest single-stock percentage
         double highestPercentage = 0.0;
         if (totalValue.compareTo(BigDecimal.ZERO) > 0) {
             for (PortfolioHolding h : holdings) {
                 double pct = h.getMarketValue()
                         .divide(totalValue, 4, RoundingMode.HALF_UP)
-                        .multiply(BigDecimal.valueOf(100))
-                        .doubleValue();
+                        .multiply(BigDecimal.valueOf(100)).doubleValue();
                 if (pct > highestPercentage) {
                     highestPercentage = pct;
                 }
             }
         }
 
-        // Determine if portfolio is high risk
         boolean isHighRisk = false;
         if (threshold != null) {
             if (highestPercentage > threshold.getMaxSingleStockPercentage()) {
                 isHighRisk = true;
             }
+            // Logic for maxOverallVolatility is not fully specified, so ignoring for now or
+            // just passing.
         }
 
-        // Create and save analysis result
         RiskAnalysisResult result = new RiskAnalysisResult();
         result.setPortfolio(portfolio);
         result.setAnalysisDate(Timestamp.from(Instant.now()));
         result.setHighestStockPercentage(highestPercentage);
-        result.setHighRisk(isHighRisk); // <-- use correct setter
+        result.setIsHighRisk(isHighRisk);
 
         return riskAnalysisResultRepository.save(result);
     }
