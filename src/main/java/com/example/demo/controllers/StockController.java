@@ -20,6 +20,8 @@ public class StockController {
         this.stockService = stockService;
     }
 
+    // ---------------- REST API METHODS ----------------
+
     @PostMapping
     @Operation(summary = "Create a new stock")
     public ResponseEntity<Stock> createStock(@RequestBody Stock stock) {
@@ -51,11 +53,17 @@ public class StockController {
         return ResponseEntity.noContent().build();
     }
 
-    // Supporting DELETE as well if requested via DELETE verb
     @DeleteMapping("/{id}")
     @Operation(summary = "Deactivate a stock (via DELETE verb)")
     public ResponseEntity<Void> deleteStock(@PathVariable Long id) {
         stockService.deactivateStock(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ---------------- TEST-COMPATIBILITY METHOD ----------------
+    // ⚠️ REQUIRED for PortfolioRiskAnalyzerTest (DO NOT REMOVE)
+
+    public Stock getStock(long id) {
+        return stockService.getStockById(id);
     }
 }
