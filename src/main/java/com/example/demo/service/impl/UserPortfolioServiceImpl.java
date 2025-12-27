@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.entity.User;
-import com.example.demo.entity.UserPortfolio;
+import com.example.demo.model.User;
+import com.example.demo.model.UserPortfolio;
 import com.example.demo.repository.UserPortfolioRepository;
 import com.example.demo.service.UserPortfolioService;
 import com.example.demo.service.UserService;
