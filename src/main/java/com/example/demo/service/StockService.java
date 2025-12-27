@@ -1,8 +1,6 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Stock;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 public interface StockService {
@@ -11,7 +9,7 @@ public interface StockService {
 
     Stock updateStock(Long id, Stock stock);
 
-    ResponseEntity<Stock> getStockById(Long id);
+    Stock getStockById(Long id);
 
     List<Stock> getAllStocks();
 
