@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/stocks")
@@ -30,14 +31,16 @@ public class StockController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing stock")
-    public ResponseEntity<Stock> updateStock(@PathVariable Long id, @RequestBody Stock stock) {
+    public ResponseEntity<Stock> updateStock(@PathVariable Long id,
+                                             @RequestBody Stock stock) {
         return ResponseEntity.ok(stockService.updateStock(id, stock));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a stock by ID")
     public ResponseEntity<Stock> getStockById(@PathVariable Long id) {
-        return ResponseEntity.ok(stockService.getStockById(id));
+        // IMPORTANT: service already returns ResponseEntity<Stock>
+        return stockService.getStockById(id);
     }
 
     @GetMapping
@@ -64,6 +67,10 @@ public class StockController {
     // ⚠️ REQUIRED for PortfolioRiskAnalyzerTest (DO NOT REMOVE)
 
     public Stock getStock(long id) {
-        return stockService.getStockById(id);
+        // Test expects Stock, so unwrap ResponseEntity
+        return Objects.requireNonNull(
+                stockService.getStockById(id).getBody(),
+                "Stock not found with id: " + id
+        );
     }
 }

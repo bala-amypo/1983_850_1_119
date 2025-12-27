@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
@@ -19,7 +20,8 @@ public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
     private final UserPortfolioService userPortfolioService;
     private final StockService stockService;
 
-    public PortfolioHoldingServiceImpl(PortfolioHoldingRepository portfolioHoldingRepository,
+    public PortfolioHoldingServiceImpl(
+            PortfolioHoldingRepository portfolioHoldingRepository,
             UserPortfolioService userPortfolioService,
             StockService stockService) {
         this.portfolioHoldingRepository = portfolioHoldingRepository;
@@ -29,26 +31,35 @@ public class PortfolioHoldingServiceImpl implements PortfolioHoldingService {
 
     @Override
     public PortfolioHolding addHolding(Long portfolioId, Long stockId, PortfolioHolding holding) {
-        UserPortfolio portfolio = userPortfolioService.getPortfolioById(portfolioId);
-        Stock stock = stockService.getStockById(stockId);
 
+        // Get portfolio (already returns domain object)
+        UserPortfolio portfolio = userPortfolioService.getPortfolioById(portfolioId);
+
+        // StockService returns ResponseEntity<Stock> → unwrap body
+        Stock stock = Objects.requireNonNull(
+                stockService.getStockById(stockId).getBody(),
+                "Stock not found with id: " + stockId
+        );
+
+        // Validations
         if (holding.getQuantity() <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero");
         }
-        if (holding.getMarketValue().compareTo(BigDecimal.ZERO) < 0) {
+
+        if (holding.getMarketValue() == null ||
+                holding.getMarketValue().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Market value must be non-negative");
         }
 
+        // Set relations
         holding.setPortfolio(portfolio);
         holding.setStock(stock);
+
         return portfolioHoldingRepository.save(holding);
     }
 
     @Override
     public List<PortfolioHolding> getHoldingsByPortfolio(Long portfolioId) {
-        // Validation of portfolio existence is implicit if we rely on finding it,
-        // but here we just query. To follow strict rules, maybe we should check if
-        // portfolio exists first.
         return portfolioHoldingRepository.findByPortfolioId(portfolioId);
     }
 }
