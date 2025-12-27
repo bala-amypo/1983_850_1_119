@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.PortfolioHolding;
+import com.example.demo.model.PortfolioHolding;
 import java.util.List;
 
 public interface PortfolioHoldingService {

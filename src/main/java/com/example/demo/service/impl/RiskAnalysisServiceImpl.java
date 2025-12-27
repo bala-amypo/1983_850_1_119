@@ -1,9 +1,9 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.PortfolioHolding;
-import com.example.demo.entity.RiskAnalysisResult;
-import com.example.demo.entity.RiskThreshold;
-import com.example.demo.entity.UserPortfolio;
+import com.example.demo.model.PortfolioHolding;
+import com.example.demo.model.RiskAnalysisResult;
+import com.example.demo.model.RiskThreshold;
+import com.example.demo.model.UserPortfolio;
 import com.example.demo.repository.RiskAnalysisResultRepository;
 import com.example.demo.service.PortfolioHoldingService;
 import com.example.demo.service.RiskAnalysisService;
