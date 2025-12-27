@@ -20,6 +20,8 @@ public class UserPortfolioController {
         this.userPortfolioService = userPortfolioService;
     }
 
+    // ---------------- REST API METHODS ----------------
+
     @PostMapping
     @Operation(summary = "Create a new portfolio")
     public ResponseEntity<UserPortfolio> createPortfolio(@RequestBody UserPortfolio portfolio) {
@@ -36,5 +38,12 @@ public class UserPortfolioController {
     @Operation(summary = "List portfolios for a specific user")
     public ResponseEntity<List<UserPortfolio>> getPortfoliosByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userPortfolioService.getPortfoliosByUser(userId));
+    }
+
+    // ---------------- TEST-COMPATIBILITY METHOD ----------------
+    // ⚠️ REQUIRED for PortfolioRiskAnalyzerTest (DO NOT REMOVE)
+
+    public UserPortfolio getPortfolio(long id) {
+        return userPortfolioService.getPortfolioById(id);
     }
 }
