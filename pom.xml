@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ✅ Spring Boot 2.x (required for getStatusCodeValue()) -->
+    <!-- Spring Boot 2.x (required for getStatusCodeValue()) -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -56,21 +56,21 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
-        <!-- MySQL -->
+        <!-- ✅ MySQL (Boot-managed, NO version needed) -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Swagger (Spring Boot 2 compatible) -->
+        <!-- Swagger (Boot 2 compatible) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.7.0</version>
         </dependency>
 
-        <!-- Spring Boot Test (JUnit excluded, TestNG used) -->
+        <!-- Spring Boot Test (JUnit excluded) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
